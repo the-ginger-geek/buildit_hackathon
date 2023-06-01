@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => AppViewModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -11,46 +16,85 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => AppViewModel(),
-      child: MaterialApp(
-        title: 'Build iT',
-        home: Scaffold(
-          appBar: AppBar(
-            title: const Text('Build iT'),
-          ),
-          body: Column(
+    return MaterialApp(
+      title: 'Build iT',
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.orange[900],
+          title: const Text('Build iT'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
             children: [
               Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: () => context.read<AppViewModel>().selectFile(),
-                    child: const Text('Select File'),
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.orange[900],
+                        ),
+                      ),
+                      onPressed: () =>
+                          context.read<AppViewModel>().selectFile(),
+                      child: const Text('Select File'),
+                    ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 20),
                   Consumer<AppViewModel>(
-                    builder: (_, viewModel, __) =>
-                        Text(viewModel.selectedFilePath ?? ''),
+                    builder: (context, viewModel, child) {
+                      return Expanded(
+                        child: Text(
+                          viewModel.selectedFilePath ?? '',
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
+              const SizedBox(height: 15),
               Row(
                 children: [
-                  ElevatedButton(
-                    onPressed: () =>
-                        context.read<AppViewModel>().uploadCsvFile(),
-                    child: const Text('Upload CSV'),
+                  SizedBox(
+                    width: 200,
+                    child: ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateProperty.all(
+                          Colors.orange[900],
+                        ),
+                      ),
+                      onPressed: () =>
+                          context.read<AppViewModel>().uploadCsvFile(),
+                      child: const Text('Upload CSV'),
+                    ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 20),
                   Consumer<AppViewModel>(
-                    builder: (_, viewModel, __) =>
-                        Text(viewModel.uploadedCsvFilePath ?? ''),
+                    builder: (context, viewModel, child) => Expanded(
+                      child: Text(
+                        viewModel.uploadedCsvFilePath ?? '',
+                      ),
+                    ),
                   ),
                 ],
               ),
-              ElevatedButton(
-                onPressed: () => context.read<AppViewModel>().run(),
-                child: const Text('Run'),
+              const SizedBox(height: 15),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: SizedBox(
+                  width: 200,
+                  child: ElevatedButton(
+                    style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all(
+                        Colors.orange[900],
+                      ),
+                    ),
+                    onPressed: () => context.read<AppViewModel>().run(),
+                    child: const Text('Run'),
+                  ),
+                ),
               ),
             ],
           ),
