@@ -1,6 +1,7 @@
+import 'package:app/api/ask_ai.dart';
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
+import 'package:logger/logger.dart';
 
 class AppViewModel extends ChangeNotifier {
   String? _selectedFilePath;
@@ -10,45 +11,29 @@ class AppViewModel extends ChangeNotifier {
   String? get uploadedCsvFilePath => _uploadedCsvFilePath;
 
   Future<void> selectFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      _selectedFilePath = result.files.single.path;
-      notifyListeners();
-    }
-  }
-
-  Future<void> uploadCsvFile() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['csv']);
-    if (result != null) {
-      _uploadedCsvFilePath = result.files.single.path;
+    String? path = await FilePicker.platform.getDirectoryPath();
+    if (path != null) {
+      _selectedFilePath = path;
       notifyListeners();
     }
   }
 
   void run() async {
-    var apiKey = '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';
+    var apiKey = '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';
     var directory = _selectedFilePath ?? '';
-    var sentryAuthToken = '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65';
+    var sentryAuthToken =
+        '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65';
     var orgSlug = 'build-it-xb';
     var projectSlug = 'flutter';
 
-    var process = await Process.run('python', [
-      '../../packages/open_ai_client/src/open_ai_client.py',
-      '--api_key',
-      apiKey,
-      '--directory',
-      directory,
-      '--sentry_auth_token',
-      sentryAuthToken,
-      '--org_slug',
-      orgSlug,
-      '--project_slug',
-      projectSlug,
-    ]);
+    final result = await AskAI.askAI(
+      openAIApiKey: apiKey,
+      projectDirectory: directory,
+      sentryAuthToken: sentryAuthToken,
+      sentryOrgSlug: orgSlug,
+      sentryProjectSlug: projectSlug,
+    );
 
-    print('Process exited with ${process.exitCode}');
-    print('stdout: ${process.stdout}');
-    print('stderr: ${process.stderr}');
+    Logger().d(result);
   }
 }

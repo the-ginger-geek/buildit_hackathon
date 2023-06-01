@@ -30,12 +30,6 @@ class MyApp extends StatelessWidget {
                   context.watch<AppViewModel>().selectFile,
                   context.watch<AppViewModel>().selectedFilePath),
               const SizedBox(height: 15),
-              _buildActionButtonRow(
-                  context,
-                  'Upload CSV',
-                  context.watch<AppViewModel>().uploadCsvFile,
-                  context.watch<AppViewModel>().uploadedCsvFilePath),
-              const SizedBox(height: 15),
               Align(
                 alignment: Alignment.centerLeft,
                 child: _buildActionButton(
