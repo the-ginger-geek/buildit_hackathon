@@ -1,13 +1,26 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
-import 'dart:io';
 
 class AppViewModel extends ChangeNotifier {
   String? _selectedFilePath;
   String? _uploadedCsvFilePath;
+  String? _apiKey;
+  String? _authTokenSentry;
+  String? _organisationSlug;
+  String? _projectSlug;
+  String? _result;
+
+  bool _isLoading = false;
 
   String? get selectedFilePath => _selectedFilePath;
   String? get uploadedCsvFilePath => _uploadedCsvFilePath;
+  bool get isBusy => _isLoading;
+  String? get result => _result;
+
+  set result(String? value) {
+    _result = value;
+    notifyListeners();
+  }
 
   Future<void> selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
@@ -26,29 +39,50 @@ class AppViewModel extends ChangeNotifier {
     }
   }
 
-  void run() async {
-    var apiKey = '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';
-    var directory = _selectedFilePath ?? '';
-    var sentryAuthToken = '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65';
-    var orgSlug = 'build-it-xb';
-    var projectSlug = 'flutter';
+  void updateApiKey(String value) {
+    _apiKey = value;
+    notifyListeners();
+  }
 
-    var process = await Process.run('python', [
-      '../../packages/open_ai_client/src/open_ai_client.py',
-      '--api_key',
-      apiKey,
-      '--directory',
-      directory,
-      '--sentry_auth_token',
-      sentryAuthToken,
-      '--org_slug',
-      orgSlug,
-      '--project_slug',
-      projectSlug,
-    ]);
+  void updateAuthTokenSentry(String value) {
+    _authTokenSentry = value;
+    notifyListeners();
+  }
 
-    print('Process exited with ${process.exitCode}');
-    print('stdout: ${process.stdout}');
-    print('stderr: ${process.stderr}');
+  void updateOrganisationSlug(String value) {
+    _organisationSlug = value;
+    notifyListeners();
+  }
+
+  void updateProjectSlug(String value) {
+    _projectSlug = value;
+    notifyListeners();
+  }
+
+  String? validateNotEmpty(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Field can not be empty';
+    }
+    return null;
+  }
+
+  void setIsBusy(bool isBusy) {
+    _isLoading = isBusy;
+    notifyListeners();
+  }
+
+  Future run(GlobalKey<FormState> formKey) async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
+
+    setIsBusy(true);
+
+    await Future.delayed(
+      const Duration(seconds: 5),
+    );
+    _result = 'hello world';
+
+    setIsBusy(false);
   }
 }
