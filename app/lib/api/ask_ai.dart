@@ -1,6 +1,5 @@
 import 'package:http/http.dart' as http;
 import 'package:logger/logger.dart';
-import 'dart:convert';
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:dart_openai/dart_openai.dart';
@@ -64,7 +63,8 @@ class OpenAIQuestionBuilder {
     }
     questions.add(eventsStrings.join(' '));
 
-    questions.add("\n\nLooking at the above, show me in the code where the issue might be coming from and show a code snippet with arrows (<<) pointing to the line of code that has the problem.");
+    questions.add(
+        "\n\nLooking at the above, show me in the code where the issue might be coming from and show a code snippet with arrows (<<) pointing to the line of code that has the problem.");
     prompts.add(OpenAIChatCompletionChoiceMessageModel(
         role: OpenAIChatMessageRole.user, content: questions.join(' ')));
     return prompts;

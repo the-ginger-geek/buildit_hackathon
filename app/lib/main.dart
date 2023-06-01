@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Build iT',
+      title: 'Build iT - Bug Finder 5000',
       home: Consumer<AppViewModel>(
         builder: (context, viewModel, _) {
           if (viewModel.isBusy) {
@@ -60,24 +60,28 @@ class MyApp extends StatelessWidget {
                   children: [
                     _inputField(context),
                     TextFormField(
+                      initialValue:
+                          '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65',
                       onChanged: (value) => context
                           .read<AppViewModel>()
                           .updateAuthTokenSentry(value),
                       validator: context.read<AppViewModel>().validateNotEmpty,
                       decoration: const InputDecoration(
-                        hintText: 'Auth Token Sentry',
+                        hintText: 'Sentry Auth Token',
                       ),
                     ),
                     TextFormField(
+                      initialValue: 'build-it-xb',
                       onChanged: (value) => context
                           .read<AppViewModel>()
                           .updateOrganisationSlug(value),
                       validator: context.read<AppViewModel>().validateNotEmpty,
                       decoration: const InputDecoration(
-                        hintText: 'Organisation Slug',
+                        hintText: 'Org Slug',
                       ),
                     ),
                     TextFormField(
+                      initialValue: 'flutter',
                       onChanged: (value) =>
                           context.read<AppViewModel>().updateProjectSlug(value),
                       validator: context.read<AppViewModel>().validateNotEmpty,
@@ -90,23 +94,15 @@ class MyApp extends StatelessWidget {
                     ),
                     _buildActionButtonRow(
                         context,
-                        'Select File',
+                        'Select Project Directory',
                         context.watch<AppViewModel>().selectFile,
                         context.watch<AppViewModel>().selectedFilePath),
                     const SizedBox(height: 15),
-                    _buildActionButtonRow(
-                        context,
-                        'Upload CSV',
-                        context.watch<AppViewModel>().uploadCsvFile,
-                        context.watch<AppViewModel>().uploadedCsvFilePath),
-                    const SizedBox(
-                      height: 15,
-                    ),
                     Align(
                       alignment: Alignment.centerLeft,
                       child: _buildActionButton(
                         context,
-                        'Run',
+                        'Find Bugs',
                         () {
                           Provider.of<AppViewModel>(context, listen: false)
                               .run(_formKey);
@@ -126,6 +122,7 @@ class MyApp extends StatelessWidget {
 
 TextFormField _inputField(BuildContext context) {
   return TextFormField(
+    initialValue: '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',
     onChanged: (value) => context.read<AppViewModel>().updateApiKey(value),
     validator: context.read<AppViewModel>().validateNotEmpty,
     decoration: const InputDecoration(

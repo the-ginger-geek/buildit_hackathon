@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:logger/logger.dart';
+
+import '../api/ask_ai.dart';
 
 class AppViewModel extends ChangeNotifier {
   String? _selectedFilePath;
@@ -23,18 +26,9 @@ class AppViewModel extends ChangeNotifier {
   }
 
   Future<void> selectFile() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles();
-    if (result != null) {
-      _selectedFilePath = result.files.single.path;
-      notifyListeners();
-    }
-  }
-
-  Future<void> uploadCsvFile() async {
-    FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['csv']);
-    if (result != null) {
-      _uploadedCsvFilePath = result.files.single.path;
+    String? path = await FilePicker.platform.getDirectoryPath();
+    if (path != null) {
+      _selectedFilePath = path;
       notifyListeners();
     }
   }
@@ -71,17 +65,45 @@ class AppViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future run(GlobalKey<FormState> formKey) async {
+  // Future run(GlobalKey<FormState> formKey) async {
+  //   if (!formKey.currentState!.validate()) {
+  //     return;
+  //   }
+
+  //   setIsBusy(true);
+
+  //   await Future.delayed(
+  //     const Duration(seconds: 5),
+  //   );
+  //   _result = 'hello world';
+
+  //   setIsBusy(false);
+  // }
+
+  Future<void> run(GlobalKey<FormState> formKey) async {
     if (!formKey.currentState!.validate()) {
       return;
     }
 
     setIsBusy(true);
 
-    await Future.delayed(
-      const Duration(seconds: 5),
+    var apiKey = _apiKey ?? '';
+    // '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';
+    var directory = _selectedFilePath ?? '';
+    var sentryAuthToken = _authTokenSentry ?? '';
+    // '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65';
+    var orgSlug = _organisationSlug ?? '';
+    // 'build-it-xb';
+    var projectSlug = _projectSlug ?? '';
+    // 'flutter';
+    _result = await AskAI.askAI(
+      openAIApiKey: apiKey,
+      projectDirectory: directory,
+      sentryAuthToken: sentryAuthToken,
+      sentryOrgSlug: orgSlug,
+      sentryProjectSlug: projectSlug,
     );
-    _result = 'hello world';
+    Logger().d(result);
 
     setIsBusy(false);
   }
