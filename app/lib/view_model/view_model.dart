@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:file_picker/file_picker.dart';
+import 'dart:io';
 
 class AppViewModel extends ChangeNotifier {
   String? _selectedFilePath;
@@ -25,7 +26,29 @@ class AppViewModel extends ChangeNotifier {
     }
   }
 
-  void run() {
-    // Implement your 'run' logic here.
+  void run() async {
+    var apiKey = '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';
+    var directory = _selectedFilePath ?? '';
+    var sentryAuthToken = '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65';
+    var orgSlug = 'build-it-xb';
+    var projectSlug = 'flutter';
+
+    var process = await Process.run('python', [
+      'mypythonscript.py',
+      '--api_key',
+      apiKey,
+      '--directory',
+      directory,
+      '--sentry_auth_token',
+      sentryAuthToken,
+      '--org_slug',
+      orgSlug,
+      '--project_slug',
+      projectSlug,
+    ]);
+
+    print('Process exited with ${process.exitCode}');
+    print('stdout: ${process.stdout}');
+    print('stderr: ${process.stderr}');
   }
 }
