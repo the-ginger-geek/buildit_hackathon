@@ -12,93 +12,76 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Build iT',
       home: Scaffold(
-        appBar: AppBar(
-          backgroundColor: Colors.orange[900],
-          title: const Text('Build iT'),
-        ),
+        appBar: _buildAppBar(),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Row(
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          Colors.orange[900],
-                        ),
-                      ),
-                      onPressed: () =>
-                          context.read<AppViewModel>().selectFile(),
-                      child: const Text('Select File'),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Consumer<AppViewModel>(
-                    builder: (context, viewModel, child) {
-                      return Expanded(
-                        child: Text(
-                          viewModel.selectedFilePath ?? '',
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
+              _buildActionButtonRow(
+                  context,
+                  'Select File',
+                  context.watch<AppViewModel>().selectFile,
+                  context.watch<AppViewModel>().selectedFilePath),
               const SizedBox(height: 15),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 200,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: MaterialStateProperty.all(
-                          Colors.orange[900],
-                        ),
-                      ),
-                      onPressed: () =>
-                          context.read<AppViewModel>().uploadCsvFile(),
-                      child: const Text('Upload CSV'),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Consumer<AppViewModel>(
-                    builder: (context, viewModel, child) => Expanded(
-                      child: Text(
-                        viewModel.uploadedCsvFilePath ?? '',
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+              _buildActionButtonRow(
+                  context,
+                  'Upload CSV',
+                  context.watch<AppViewModel>().uploadCsvFile,
+                  context.watch<AppViewModel>().uploadedCsvFilePath),
               const SizedBox(height: 15),
               Align(
                 alignment: Alignment.centerLeft,
-                child: SizedBox(
-                  width: 200,
-                  child: ElevatedButton(
-                    style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all(
-                        Colors.orange[900],
-                      ),
-                    ),
-                    onPressed: () => context.read<AppViewModel>().run(),
-                    child: const Text('Run'),
-                  ),
-                ),
+                child: _buildActionButton(
+                    context, 'Run', context.watch<AppViewModel>().run),
               ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: Colors.orange[900],
+      title: const Text('Build iT'),
+    );
+  }
+
+  Widget _buildActionButtonRow(BuildContext context, String buttonText,
+      Function() onPressed, String? filePath) {
+    return Row(
+      children: [
+        _buildActionButton(context, buttonText, onPressed),
+        const SizedBox(width: 20),
+        Expanded(
+          child: Text(
+            filePath ?? '',
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButton(
+      BuildContext context, String buttonText, Function() onPressed) {
+    return SizedBox(
+      width: 200,
+      child: ElevatedButton(
+        style: ButtonStyle(
+          backgroundColor: MaterialStateProperty.all(
+            Colors.orange[900],
+          ),
+        ),
+        onPressed: onPressed,
+        child: Text(buttonText),
       ),
     );
   }
