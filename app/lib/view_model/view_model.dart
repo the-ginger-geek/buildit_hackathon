@@ -34,7 +34,7 @@ class AppViewModel extends ChangeNotifier {
     var projectSlug = 'flutter';
 
     var process = await Process.run('python', [
-      'mypythonscript.py',
+      '../../packages/open_ai_client/src/open_ai_client.py',
       '--api_key',
       apiKey,
       '--directory',
