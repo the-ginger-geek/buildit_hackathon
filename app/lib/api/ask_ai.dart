@@ -42,7 +42,8 @@ class OpenAIQuestionBuilder {
   Future<List<OpenAIChatCompletionChoiceMessageModel>> buildQuestions() async {
     final prompts = [
       const OpenAIChatCompletionChoiceMessageModel(
-          content: "You are a knowledgeable programming assistant.",
+          content:
+              "You are a fault finding bot that interrogates issues from provided logs and you formulate fixs for the faults.",
           role: OpenAIChatMessageRole.system)
     ];
     final questions = ["Scan through the following code\n\n"];
