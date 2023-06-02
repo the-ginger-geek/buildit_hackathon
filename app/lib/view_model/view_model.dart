@@ -107,4 +107,9 @@ class AppViewModel extends ChangeNotifier {
 
     setIsBusy(false);
   }
+
+  void resetResult() {
+    _result = null;
+    notifyListeners();
+  }
 }

@@ -65,7 +65,7 @@ class OpenAIQuestionBuilder {
     questions.add(eventsStrings.join(' '));
 
     questions.add(
-        "\n\nLooking at the above, show me in the code where the issue might be coming from and show a code snippet with arrows (<<) pointing to the line of code that has the problem.");
+        "\n\nLooking at the above, show me in the code where the issue might be coming from and show a code snippet with arrows (<<) pointing to the line of code that has the problem. Also suggest 3 possible solutions with code examples based on the analysis and number them from 1 to 3");
     prompts.add(OpenAIChatCompletionChoiceMessageModel(
         role: OpenAIChatMessageRole.user, content: questions.join(' ')));
     return prompts;
