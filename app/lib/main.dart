@@ -1,4 +1,5 @@
 import 'package:app/view_model/view_model.dart';
+import 'package:flex_color_scheme/flex_color_scheme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -16,7 +17,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
-  final appTitle = 'Build iT - Bug Finder 5000';
+  final appTitle = 'Welcome to bug Finder 5000';
 
   MyApp({Key? key}) : super(key: key);
 
@@ -24,13 +25,24 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: appTitle,
+      theme: FlexThemeData.light(
+        scheme: FlexScheme.mandyRed,
+        blendLevel: 2,
+        subThemesData: const FlexSubThemesData(
+          blendOnLevel: 6,
+          blendOnColors: false,
+          useTextTheme: true,
+          useM2StyleDividerInM3: true,
+        ),
+        visualDensity: FlexColorScheme.comfortablePlatformDensity,
+        swapLegacyOnMaterial3: true,
+      ),
       home: Consumer<AppViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
-            backgroundColor: Colors.grey.shade100,
             appBar: _buildAppBar(context),
             body: AnimatedCrossFade(
-              firstChild: _buildProgress(),
+              firstChild: _buildProgress(context),
               secondChild: _buildForm(context, viewModel),
               crossFadeState: viewModel.isBusy
                   ? CrossFadeState.showFirst
@@ -65,58 +77,73 @@ class MyApp extends StatelessWidget {
         horizontal: 32.0,
         vertical: 16.0,
       ),
-      child: Column(
-        children: [
-          _inputField(context),
-          TextFormField(
-            initialValue:
-                '7cee24623fb54366a02ec551d480ed32852178a7e39f43a490384cb72571eb65',
-            onChanged: (value) =>
-                context.read<AppViewModel>().updateAuthTokenSentry(value),
-            validator: context.read<AppViewModel>().validateNotEmpty,
-            decoration: const InputDecoration(
-              hintText: 'Sentry Auth Token',
-            ),
+      child: Center(
+        child: SizedBox(
+          width: 800,
+          child: Column(
+            children: [
+              const SizedBox(height: 16.0),
+              SizedBox(
+                width: 800,
+                child: Text(
+                  'Step 1: Input your project details',
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground),
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              _inputField(context),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                onChanged: (value) =>
+                    context.read<AppViewModel>().updateAuthTokenSentry(value),
+                validator: context.read<AppViewModel>().validateNotEmpty,
+                decoration: const InputDecoration(
+                  hintText: 'Sentry Auth Token',
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                onChanged: (value) =>
+                    context.read<AppViewModel>().updateOrganisationSlug(value),
+                validator: context.read<AppViewModel>().validateNotEmpty,
+                decoration: const InputDecoration(
+                  hintText: 'Sentry Organisation Slug',
+                ),
+              ),
+              const SizedBox(height: 8.0),
+              TextFormField(
+                onChanged: (value) =>
+                    context.read<AppViewModel>().updateProjectSlug(value),
+                validator: context.read<AppViewModel>().validateNotEmpty,
+                decoration: const InputDecoration(
+                  hintText: 'Sentry Project Slug',
+                ),
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              _buildActionButtonRow(
+                context,
+                'Select Project Directory',
+                context.watch<AppViewModel>().selectFile,
+                context.watch<AppViewModel>().selectedFilePath,
+              ),
+              const SizedBox(height: 15),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: _buildActionButton(
+                  context,
+                  'Find Bugs',
+                  () {
+                    Provider.of<AppViewModel>(context, listen: false)
+                        .run(_formKey);
+                  },
+                ),
+              ),
+            ],
           ),
-          TextFormField(
-            initialValue: 'build-it-xb',
-            onChanged: (value) =>
-                context.read<AppViewModel>().updateOrganisationSlug(value),
-            validator: context.read<AppViewModel>().validateNotEmpty,
-            decoration: const InputDecoration(
-              hintText: 'Org Slug',
-            ),
-          ),
-          TextFormField(
-            initialValue: 'flutter',
-            onChanged: (value) =>
-                context.read<AppViewModel>().updateProjectSlug(value),
-            validator: context.read<AppViewModel>().validateNotEmpty,
-            decoration: const InputDecoration(
-              hintText: 'Project Slug',
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          _buildActionButtonRow(
-            context,
-            'Select Project Directory',
-            context.watch<AppViewModel>().selectFile,
-            context.watch<AppViewModel>().selectedFilePath,
-          ),
-          const SizedBox(height: 15),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: _buildActionButton(
-              context,
-              'Find Bugs',
-              () {
-                Provider.of<AppViewModel>(context, listen: false).run(_formKey);
-              },
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
@@ -136,7 +163,34 @@ class MyApp extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              const SizedBox(height: 16),
+              Text(
+                'Step 3: Be amazed!',
+                style: Theme.of(context).textTheme.headlineLarge,
+              ),
               const SizedBox(height: 32),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Here are some suggested fixes to your application errors',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.bold),
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: ElevatedButton(
+                        onPressed: viewModel.resetResult,
+                        child: const Text('Search again'),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              const Divider(color: Colors.black,),
+              const SizedBox(height: 16),
               MarkdownBody(
                 data: viewModel.result ?? '',
                 selectable: true,
@@ -165,7 +219,7 @@ class MyApp extends StatelessWidget {
                         color: Colors.white,
                         fontFamily: "monospace",
                         backgroundColor: Colors.black,
-
+                        height: 1.5,
                       ),
                   codeblockPadding: const EdgeInsets.all(25.0),
                   codeblockDecoration: BoxDecoration(
@@ -199,10 +253,6 @@ class MyApp extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              TextButton(
-                onPressed: viewModel.resetResult,
-                child: const Text('Done'),
-              ),
             ],
           ),
         ),
@@ -210,24 +260,40 @@ class MyApp extends StatelessWidget {
     );
   }
 
-  Center _buildProgress() {
+  Center _buildProgress(BuildContext context) {
     return Center(
-      child: Container(
+      child: SizedBox(
         width: 285.0,
-        height: 285.0,
-        clipBehavior: Clip.antiAlias,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25.0),
+        height: 400,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Step 2: Have some coffee...',
+              style: Theme.of(context).textTheme.headlineLarge,
+            ),
+            const SizedBox(height: 8.0),
+            Container(
+              width: 285.0,
+              height: 200,
+              clipBehavior: Clip.antiAlias,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(25.0),
+              ),
+              child: const RiveAnimation.asset(
+                'assets/cup_loader.riv',
+                fit: BoxFit.fitWidth,
+                antialiasing: true,
+              ),
+            ),
+          ],
         ),
-        child: const RiveAnimation.asset('assets/chicken.riv',
-            fit: BoxFit.contain),
       ),
     );
   }
 
   TextFormField _inputField(BuildContext context) {
     return TextFormField(
-      initialValue: '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',
       onChanged: (value) => context.read<AppViewModel>().updateApiKey(value),
       validator: context.read<AppViewModel>().validateNotEmpty,
       decoration: const InputDecoration(
@@ -239,12 +305,7 @@ class MyApp extends StatelessWidget {
   AppBar _buildAppBar(BuildContext context) {
     return AppBar(
       elevation: 0,
-      backgroundColor: Colors.grey.shade50,
-      title: Text(appTitle,
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge
-              ?.copyWith(color: Colors.blueGrey)),
+      title: Text(appTitle),
     );
   }
 
@@ -265,18 +326,9 @@ class MyApp extends StatelessWidget {
 
   Widget _buildActionButton(
       BuildContext context, String buttonText, Function() onPressed) {
-    return SizedBox(
-      width: 200,
-      child: MaterialButton(
-        color: Colors.tealAccent,
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        elevation: 3.0,
-        onPressed: onPressed,
-        child: Text(buttonText),
-      ),
+    return ElevatedButton(
+      onPressed: onPressed,
+      child: Text(buttonText),
     );
   }
 }
